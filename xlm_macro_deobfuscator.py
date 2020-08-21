@@ -110,8 +110,7 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
             formulas_deobfuscated_subsection.add_tag(ioc_tag, ioc)
 
     # Populate 'Formulas' result subsection with all suspicious formulas found without deobfuscation
-    for cell in formulas.keys():
-        formula = formulas[cell]
+    for cell, formula in formulas.items():
         # Only add complete formulas
         if "FORMULA(" in formula:
             cell_referenced = formula.rsplit(',', 1)[1][:-1]
@@ -121,8 +120,7 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
             formulas_subsection.add_line(cell + ": " + formula)
 
     # Populate 'Deobfuscated Formulas' result subsection with all deobfuscated suspicious formulas
-    for cell in formulas_deobfuscated.keys():
-        formula = formulas_deobfuscated[cell]
+    for cell, formula in formulas_deobfuscated.items():
         # Only add complete formulas
         if "FORMULA(" in formula:
             cell_referenced = formula.rsplit(',', 1)[1][:-1]
