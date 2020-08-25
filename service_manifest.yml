@@ -58,5 +58,5 @@ heuristics:
 
 docker_config:
   image: ${REGISTRY}cccs/assemblyline-service-XLMMacroDeobfuscator:$SERVICE_TAG
-  cpu_cores: 1.0
+  cpu_cores: 1
   ram_mb: 1024

@@ -147,10 +147,10 @@ def add_results(result, data, data_deobfuscated):
 
 class XLMMacroDeobfuscator(ServiceBase):
     def start(self):
-        self.log.info('Service started')
+        self.log.info('XLM Macro Deobfuscator service started')
 
     def stop(self):
-        self.log.info('Service ended')
+        self.log.info('XLM Macro Deobfuscator service ended')
 
     def execute(self, request):
         result = Result()
