@@ -131,8 +131,8 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
 
 
 def add_results(result, data, data_deobfuscated):
-    result_ioc = ResultSection('IoCs')
-    result_formula = ResultSection('Suspicious Formulas')
+    result_ioc = ResultSection('Found the following IoCs')
+    result_formula = ResultSection('Suspicious formulas found in document')
 
     # Tag IoCs/formulas and generate result subsections
     tag_data(data, data_deobfuscated, result_ioc, result_formula)
