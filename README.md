@@ -1,5 +1,4 @@
 # assemblyline-service-XLMMacroDeobfuscator
-Assemblyline 4 XLM macro deobfuscator service
 
 Decode obfuscated XLM macros (also known as Excel 4.0 macros). 
 
