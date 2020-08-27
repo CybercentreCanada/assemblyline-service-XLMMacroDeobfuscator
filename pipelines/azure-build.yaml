@@ -24,6 +24,6 @@ stages:
     - script: |
         set -xv  # Echo commands before they are run
         export TAG=${BUILD_SOURCEBRANCH#"refs/tags/v"}
-        docker build --build-arg version=$TAG -t cccs/assemblyline-XLMMacroDeobfuscator:$TAG -t cccs/assemblyline-service-XLMMacroDeobfuscator:latest .
-        docker push cccs/assemblyline-service-XLMMacroDeobfuscator
+        docker build --build-arg version=$TAG -t cccs/assemblyline-xlmmacrodeobfuscator:$TAG -t cccs/assemblyline-service-xlmmacrodeobfuscator:latest .
+        docker push cccs/assemblyline-service-xlmmacrodeobfuscator
       displayName: Deploy to Docker Hub
