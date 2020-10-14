@@ -159,21 +159,29 @@ class XLMMacroDeobfuscator(ServiceBase):
         password = request.get_param('password')
         start_point = request.get_param('start point')
 
-        data = process_file(file=file_path,
-                            password=password,
-                            noninteractive=True,
-                            no_indent=True,
-                            output_level=0,
-                            return_deobfuscated=True,
-                            extract_only=True)
+        try:
+            data = process_file(file=file_path,
+                                password=password,
+                                noninteractive=True,
+                                no_indent=True,
+                                output_level=0,
+                                return_deobfuscated=True,
+                                extract_only=True)
 
-        data_deobfuscated = process_file(file=file_path,
-                                         password=password,
-                                         start_point=start_point,
-                                         noninteractive=True,
-                                         no_indent=True,
-                                         output_level=0,
-                                         output_formula_format='[[CELL-ADDR]]: [[INT-FORMULA]]',
-                                         return_deobfuscated=True)
-
+            data_deobfuscated = process_file(file=file_path,
+                                             password=password,
+                                             start_point=start_point,
+                                             noninteractive=True,
+                                             no_indent=True,
+                                             output_level=0,
+                                             output_formula_format='[[CELL-ADDR]]: [[INT-FORMULA]]',
+                                             return_deobfuscated=True)
+        except Exception as e:
+            section = ResultSection('Failed to analyze', parent=request.result)
+            section.add_line(str(e))
+            section.set_heuristic(6)
+            return
+        
         add_results(result, data, data_deobfuscated)
+
+

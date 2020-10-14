@@ -35,25 +35,35 @@ heuristics:
     filetype: document/office/excel
     heur_id: 1
     score: 10
+
   - name: Network IOCs
     description: Network IOCs were found without de-obfuscation
     filetype: document/office/excel
     heur_id: 2
     score: 10
+
   - name: De-obfuscated IOCs
     description: IOCs were found only after de-obfuscation
     filetype: document/office/excel
     heur_id: 3
     score: 500
+
   - name: De-obfuscated Network IOCs
     description: Network IOCs were found only after de-obfuscation
     filetype: document/office/excel
     heur_id: 4
     score: 500
+
   - name: De-obfuscated Macro Functions
     description: Suspcious macro functions were found only after de-obfuscation
     filetype: document/office/excel
     heur_id: 5
+    score: 500
+
+  - name: Password Protected
+    description: File is encrypted with a password, potentially to hide malicious behaviour
+    filetype: document/office/excel
+    heur_id: 6
     score: 500
 
 docker_config:
