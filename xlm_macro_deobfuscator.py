@@ -179,7 +179,8 @@ class XLMMacroDeobfuscator(ServiceBase):
         except Exception as e:
             section = ResultSection('Failed to analyze', parent=request.result)
             section.add_line(str(e))
-            section.set_heuristic(6)
+            if str(e).startswith('Failed to decrypt'):
+                section.set_heuristic(6)
             return
         
         add_results(result, data, data_deobfuscated)
