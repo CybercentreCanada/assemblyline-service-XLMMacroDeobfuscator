@@ -156,12 +156,10 @@ class XLMMacroDeobfuscator(ServiceBase):
         result = Result()
         request.result = result
         file_path = request.file_path
-        password = request.get_param('password')
         start_point = request.get_param('start point')
 
         try:
             data = process_file(file=file_path,
-                                password=password,
                                 noninteractive=True,
                                 no_indent=True,
                                 output_level=0,
@@ -169,7 +167,6 @@ class XLMMacroDeobfuscator(ServiceBase):
                                 extract_only=True)
 
             data_deobfuscated = process_file(file=file_path,
-                                             password=password,
                                              start_point=start_point,
                                              noninteractive=True,
                                              no_indent=True,
@@ -182,7 +179,5 @@ class XLMMacroDeobfuscator(ServiceBase):
             if str(e).startswith('Failed to decrypt'):
                 section.set_heuristic(6)
             return
-        
+
         add_results(result, data, data_deobfuscated)
-
-
