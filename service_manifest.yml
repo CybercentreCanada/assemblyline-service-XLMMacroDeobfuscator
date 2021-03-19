@@ -10,10 +10,6 @@ rejects: empty|metadata/.*
 
 submission_params:
   - default: ''
-    name: password
-    type: str
-    value: ''
-  - default: ''
     name: start point
     type: str
     value: ''
