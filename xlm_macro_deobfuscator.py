@@ -1,32 +1,36 @@
 import collections
 import re
 
+from typing import Dict, Set, Tuple
+
 from XLMMacroDeobfuscator.deobfuscator import process_file
 from assemblyline_v4_service.common.base import ServiceBase
+from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
 
 from pattern_match import PatternMatch
 
 
-def get_result_subsection(result, title, heuristic):
-    result_subsection = None
+def get_result_subsection(result: ResultSection, title: str, heuristic: int) -> ResultSection:
+    """ Gets the subsection with the given title or creates it if it doesn't exist """
     # Set appropriate result subsection if it already exists
     for subsection in result.subsections:
         if subsection.title_text == title:
             result_subsection = subsection
+            break
     # Create appropriate result subsection if it doesn't already exist
-    if not result_subsection:
+    else:
         result_subsection = ResultSection(title)
         result.add_subsection(result_subsection)
         result_subsection.set_heuristic(heuristic)
     return result_subsection
 
 
-def tag_data(data, data_deobfuscated, result_ioc, result_formula):
+def tag_data(data: str, data_deobfuscated: str, result_ioc: ResultSection, result_formula: ResultSection) -> None:
     pattern = PatternMatch()
 
     # Get all IoCs without deobfuscation
-    ioc_dict = {}
+    ioc_dict: Dict[str, Set[Tuple[str, str, int, str]]] = {}
     formulas = collections.OrderedDict()
     for line in data:
         if line[:4] == 'CELL':
@@ -39,7 +43,7 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
                 formulas[cell] = formula
 
     # Get all IoCs after deobfuscation
-    ioc_deobfuscated_dict = {}
+    ioc_deobfuscated_dict: Dict[str, Set[Tuple[str, str, int, str]]] = {}
     formulas_deobfuscated = collections.OrderedDict()
     for line in data_deobfuscated:
         split_value = line.split(':', 1)
@@ -83,8 +87,8 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
 
             ioc_subsection = get_result_subsection(result_ioc, title, heuristic)
             ioc_subsection.add_tag(ioc_tag, ioc)
-            pattern = re.compile('(\\n|^)' + re.escape(ioc) + '(\\n|$)')
-            if ioc_subsection.body is not None and not pattern.search(ioc_subsection.body):
+            if ioc_subsection.body is not None \
+                    and not re.search('(\\n|^)' + re.escape(ioc) + '(\\n|$)', ioc_subsection.body):
                 ioc_subsection.add_line(ioc)
             elif ioc_subsection.body is None:
                 ioc_subsection.add_line(ioc)
@@ -101,8 +105,8 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
 
             ioc_subsection = get_result_subsection(result_ioc, title, heuristic)
             ioc_subsection.add_tag(ioc_tag, ioc)
-            pattern = re.compile('(\\n|^)' + re.escape(ioc) + '(\\n|$)')
-            if ioc_subsection.body is not None and not pattern.search(ioc_subsection.body):
+            if ioc_subsection.body is not None \
+                    and not re.search('(\\n|^)' + re.escape(ioc) + '(\\n|$)', ioc_subsection.body):
                 ioc_subsection.add_line(ioc)
             elif ioc_subsection.body is None:
                 ioc_subsection.add_line(ioc)
@@ -130,7 +134,7 @@ def tag_data(data, data_deobfuscated, result_ioc, result_formula):
             formulas_deobfuscated_subsection.add_line(cell + ": " + formula)
 
 
-def add_results(result, data, data_deobfuscated):
+def add_results(result: Result, data: str, data_deobfuscated: str) -> None:
     result_ioc = ResultSection('Found the following IoCs')
     result_formula = ResultSection('Suspicious formulas found in document')
 
@@ -146,13 +150,13 @@ def add_results(result, data, data_deobfuscated):
 
 
 class XLMMacroDeobfuscator(ServiceBase):
-    def start(self):
+    def start(self) -> None:
         self.log.info('XLM Macro Deobfuscator service started')
 
-    def stop(self):
+    def stop(self) -> None:
         self.log.info('XLM Macro Deobfuscator service ended')
 
-    def execute(self, request):
+    def execute(self, request: ServiceRequest) -> None:
         result = Result()
         request.result = result
         file_path = request.file_path
