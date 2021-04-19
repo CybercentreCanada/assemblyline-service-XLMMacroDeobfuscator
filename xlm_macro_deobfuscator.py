@@ -3,7 +3,7 @@ import re
 
 from typing import Dict, Set, Tuple
 
-from XLMMacroDeobfuscator.deobfuscator import process_file
+import XLMMacroDeobfuscator.configs.settings as deob_settings
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
@@ -152,11 +152,14 @@ def add_results(result: Result, data: str, data_deobfuscated: str) -> None:
 class XLMMacroDeobfuscator(ServiceBase):
     def start(self) -> None:
         self.log.info('XLM Macro Deobfuscator service started')
+        deob_settings.SILENT = True
 
     def stop(self) -> None:
         self.log.info('XLM Macro Deobfuscator service ended')
 
     def execute(self, request: ServiceRequest) -> None:
+        from XLMMacroDeobfuscator.deobfuscator import process_file
+
         result = Result()
         request.result = result
         file_path = request.file_path
