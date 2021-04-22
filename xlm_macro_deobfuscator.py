@@ -1,7 +1,10 @@
 import collections
+import json
 import re
 
-from typing import Dict, Set, Tuple
+from subprocess import run
+from tempfile import NamedTemporaryFile
+from typing import Dict, Set, Tuple, List
 
 import XLMMacroDeobfuscator.configs.settings as deob_settings
 from assemblyline_v4_service.common.base import ServiceBase
@@ -26,7 +29,8 @@ def get_result_subsection(result: ResultSection, title: str, heuristic: int) -> 
     return result_subsection
 
 
-def tag_data(data: str, data_deobfuscated: str, result_ioc: ResultSection, result_formula: ResultSection) -> None:
+def tag_data(data: List[str], data_deobfuscated: List[str], result_ioc: ResultSection,
+             result_formula: ResultSection) -> None:
     pattern = PatternMatch()
 
     # Get all IoCs without deobfuscation
@@ -134,7 +138,7 @@ def tag_data(data: str, data_deobfuscated: str, result_ioc: ResultSection, resul
             formulas_deobfuscated_subsection.add_line(cell + ": " + formula)
 
 
-def add_results(result: Result, data: str, data_deobfuscated: str) -> None:
+def add_results(result: Result, data: List[str], data_deobfuscated: List[str]) -> None:
     result_ioc = ResultSection('Found the following IoCs')
     result_formula = ResultSection('Suspicious formulas found in document')
 
@@ -152,19 +156,80 @@ def add_results(result: Result, data: str, data_deobfuscated: str) -> None:
 class XLMMacroDeobfuscator(ServiceBase):
     def start(self) -> None:
         self.log.info('XLM Macro Deobfuscator service started')
+        self.use_CLI = self.config.get('use_CLI', False)
         deob_settings.SILENT = True
 
     def stop(self) -> None:
         self.log.info('XLM Macro Deobfuscator service ended')
 
     def execute(self, request: ServiceRequest) -> None:
-        from XLMMacroDeobfuscator.deobfuscator import process_file
-
         result = Result()
         request.result = result
         file_path = request.file_path
         start_point = request.get_param('start point')
+        get_results = self.results_from_module
 
+        if self.use_CLI:
+            self.log.info('Using CLI method')
+            get_results = self.results_from_CLI
+
+        data, data_deobfuscated = get_results(file_path, start_point, request)
+
+        if data or data_deobfuscated:
+            add_results(result, data, data_deobfuscated)
+
+    def results_from_CLI(self, file_path: str, start_point: str, request: ServiceRequest) -> Tuple[List[str], List[str]]:
+        data, data_deobfuscated = [], []
+
+        def call_CLI(config: dict) -> Dict:
+            with NamedTemporaryFile("w+t") as config_file, NamedTemporaryFile() as output:
+                config['export_json'] = output.name
+                json.dump(config, config_file)
+                config_file.seek(0)
+                proc = run(['xlmdeobfuscator', f'-c={config_file.name}'], capture_output=True)
+
+                trace = "\n".join(proc.stdout.decode().split('\n')[22:])
+                # Check stdout, stderr for logging purposes
+                if proc.stderr:
+                    self.log.error(proc.stderr)
+                if 'error' in trace.lower():
+                    self.log.error(f"Error detected in CLI output: {trace}")
+                    return []
+                try:
+                    return json.load(output)
+                except json.JSONDecodeError:
+                    self.log.error('No output written on success.')
+                    return []
+
+        common_config = {
+            "file": file_path,
+            "noninteractive": True,
+            "no_indent": True,
+            "output_level": 0,
+        }
+
+        # Get results
+        data_config = common_config.copy()
+        data_config.update({'extract_only': True, "return_deobfuscated": True})
+
+        deob_config = common_config.copy()
+
+        data_json = call_CLI(data_config)
+        deob_json = call_CLI(deob_config)
+
+        # Attempt to parse results in List format as given from results_from_module output
+        for record in data_json.get('records', []):
+            if record.get('cell_add', False):
+                data.append(f"CELL:{record['cell_add']} , {record['formula']} , {record['value']}")
+        for record in deob_json.get('records', []):
+            if record.get('cell_add', False):
+                data_deobfuscated.append(f"{record['cell_add']}: {record['formula']}")
+
+        return data, data_deobfuscated
+
+    def results_from_module(self, file_path: str, start_point: str, request: ServiceRequest) -> Tuple[List[str], List[str]]:
+        from XLMMacroDeobfuscator.deobfuscator import process_file
+        data, data_deobfuscated = [], []
         try:
             data = process_file(file=file_path,
                                 noninteractive=True,
@@ -181,10 +246,9 @@ class XLMMacroDeobfuscator(ServiceBase):
                                              output_formula_format='[[CELL-ADDR]]: [[INT-FORMULA]]',
                                              return_deobfuscated=True)
         except Exception as e:
+            self.log.error(e)
             section = ResultSection('Failed to analyze', parent=request.result)
             section.add_line(str(e))
             if str(e).startswith('Failed to decrypt'):
                 section.set_heuristic(6)
-            return
-
-        add_results(result, data, data_deobfuscated)
+        return data, data_deobfuscated

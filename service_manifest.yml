@@ -8,6 +8,9 @@ description: >
 accepts: document/office/excel
 rejects: empty|metadata/.*
 
+config:
+  use_CLI: true
+
 submission_params:
   - default: ''
     name: start point
