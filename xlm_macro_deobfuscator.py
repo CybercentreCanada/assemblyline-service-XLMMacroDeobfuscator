@@ -1,9 +1,6 @@
 import collections
-import json
 import re
 
-from subprocess import run
-from tempfile import NamedTemporaryFile
 from typing import Dict, Set, Tuple, List
 
 import XLMMacroDeobfuscator.configs.settings as deob_settings
@@ -182,6 +179,10 @@ class XLMMacroDeobfuscator(ServiceBase):
         data, data_deobfuscated = [], []
 
         def call_CLI(config: dict) -> Dict:
+            import json
+            from tempfile import NamedTemporaryFile
+            from subprocess import run
+
             with NamedTemporaryFile("w+t") as config_file, NamedTemporaryFile() as output:
                 config['export_json'] = output.name
                 json.dump(config, config_file)
