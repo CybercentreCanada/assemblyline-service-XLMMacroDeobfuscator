@@ -1,9 +1,13 @@
 import collections
 import re
+import json
+from tempfile import NamedTemporaryFile
+from subprocess import run
 
-from typing import Dict, Set, Tuple, List
+from typing import Dict, List, Optional, Set, Tuple
 
 import XLMMacroDeobfuscator.configs.settings as deob_settings
+from XLMMacroDeobfuscator.deobfuscator import process_file
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
@@ -151,6 +155,10 @@ def add_results(result: Result, data: List[str], data_deobfuscated: List[str]) -
 
 
 class XLMMacroDeobfuscator(ServiceBase):
+    def __init__(self, config: Optional[Dict] = None):
+        self.use_CLI = False
+        super().__init__(config)
+
     def start(self) -> None:
         self.log.info('XLM Macro Deobfuscator service started')
         self.use_CLI = self.config.get('use_CLI', False)
@@ -175,19 +183,16 @@ class XLMMacroDeobfuscator(ServiceBase):
         if data or data_deobfuscated:
             add_results(result, data, data_deobfuscated)
 
-    def results_from_CLI(self, file_path: str, start_point: str, request: ServiceRequest) -> Tuple[List[str], List[str]]:
+    def results_from_CLI(self, file_path: str, start_point: str,
+                         request: ServiceRequest) -> Tuple[List[str], List[str]]:
         data, data_deobfuscated = [], []
 
         def call_CLI(config: dict) -> Dict:
-            import json
-            from tempfile import NamedTemporaryFile
-            from subprocess import run
-
             with NamedTemporaryFile("w+t") as config_file, NamedTemporaryFile() as output:
                 config['export_json'] = output.name
                 json.dump(config, config_file)
                 config_file.seek(0)
-                proc = run(['xlmdeobfuscator', f'-c={config_file.name}'], capture_output=True)
+                proc = run(['xlmdeobfuscator', f'-c={config_file.name}'], capture_output=True, check=False)
 
                 trace = "\n".join(proc.stdout.decode().split('\n')[22:])
                 # Check stdout, stderr for logging purposes
@@ -195,12 +200,12 @@ class XLMMacroDeobfuscator(ServiceBase):
                     self.log.error(proc.stderr)
                 if 'error' in trace.lower():
                     self.log.error(f"Error detected in CLI output: {trace}")
-                    return []
+                    return {}
                 try:
                     return json.load(output)
                 except json.JSONDecodeError:
                     self.log.error('No output written on success.')
-                    return []
+                    return {}
 
         common_config = {
             "file": file_path,
@@ -228,8 +233,8 @@ class XLMMacroDeobfuscator(ServiceBase):
 
         return data, data_deobfuscated
 
-    def results_from_module(self, file_path: str, start_point: str, request: ServiceRequest) -> Tuple[List[str], List[str]]:
-        from XLMMacroDeobfuscator.deobfuscator import process_file
+    def results_from_module(self, file_path: str, start_point: str,
+                            request: ServiceRequest) -> Tuple[List[str], List[str]]:
         data, data_deobfuscated = [], []
         try:
             data = process_file(file=file_path,
