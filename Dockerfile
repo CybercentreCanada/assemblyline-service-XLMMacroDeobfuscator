@@ -4,7 +4,9 @@ ENV SERVICE_PATH xlm_macro_deobfuscator.XLMMacroDeobfuscator
 
 # Get latest version of XLMMacroDeobfuscator library and dependencies
 RUN pip install -U https://github.com/DissectMalware/xlrd2/archive/master.zip
+# Using fork temporarily while https://github.com/DissectMalware/pyxlsb2/pull/9 is reviewed
 RUN pip install -U https://github.com/cccs-jh/pyxlsb2/archive/master.zip
+# Using fork temporarily while https://github.com/DissectMalware/XLMMacroDeobfuscator/pull/81 is reviewed
 RUN pip install -U https://github.com/cccs-rs/XLMMacroDeobfuscator/archive/master.zip
 
 # Switch to assemblyline user
