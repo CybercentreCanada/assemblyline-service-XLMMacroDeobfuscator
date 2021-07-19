@@ -9,7 +9,7 @@ accepts: document/office/excel
 rejects: empty|metadata/.*
 
 config:
-  use_CLI: true
+  use_CLI: false
 
 submission_params:
   - default: ''
