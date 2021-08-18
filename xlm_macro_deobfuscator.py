@@ -1,4 +1,5 @@
 import collections
+import os
 import re
 import json
 from tempfile import NamedTemporaryFile
@@ -155,6 +156,9 @@ def add_results(result: Result, data: List[str], data_deobfuscated: List[str]) -
 
 
 class XLMMacroDeobfuscator(ServiceBase):
+
+    DEOBS_FORMULAS_FILE = 'deobfuscated_formulas.txt'
+
     def __init__(self, config: Optional[Dict] = None):
         self.use_CLI = False
         super().__init__(config)
@@ -179,6 +183,15 @@ class XLMMacroDeobfuscator(ServiceBase):
             get_results = self.results_from_CLI
 
         data, data_deobfuscated = get_results(file_path, start_point, request)
+
+        if data_deobfuscated:
+            deobs_path = os.path.join(self.working_directory, self.DEOBS_FORMULAS_FILE)
+            try:
+                with open(deobs_path, 'w') as f:
+                    f.write('\n'.join(data_deobfuscated))
+                request.add_supplementary(deobs_path, self.DEOBS_FORMULAS_FILE, 'Deobfuscated XLM fomulas')
+            except Exception as e:
+                self.log.warning(f'Could not add deobfuscated formulas for {request.file_name}: {str(e)}')
 
         if data or data_deobfuscated:
             add_results(result, data, data_deobfuscated)
