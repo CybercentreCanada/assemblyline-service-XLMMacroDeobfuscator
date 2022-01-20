@@ -2,7 +2,7 @@ import collections
 import os
 import re
 import json
-from tempfile import NamedTemporaryFile
+import tempfile
 from subprocess import run
 
 from typing import Dict, List, Optional, Set, Tuple
@@ -201,11 +201,19 @@ class XLMMacroDeobfuscator(ServiceBase):
         data, data_deobfuscated = [], []
 
         def call_CLI(config: dict) -> Dict:
-            with NamedTemporaryFile("w+t") as config_file, NamedTemporaryFile() as output:
-                config['export_json'] = output.name
-                json.dump(config, config_file)
-                config_file.seek(0)
-                proc = run(['xlmdeobfuscator', f'-c={config_file.name}'], capture_output=True, check=False)
+            config_file_name = None
+            output_name = None
+
+            try:
+                # Create tempfiles
+                config_file_fd, config_file_name = tempfile.mkstemp()
+                output_fd, output_name = tempfile.mkstemp()
+
+                with os.fdopen(config_file_fd, "w+t") as config_file:
+                    config['export_json'] = output_name
+                    json.dump(config, config_file)
+
+                proc = run(['xlmdeobfuscator', f'-c={config_file_name}'], capture_output=True, check=False)
 
                 trace = "\n".join(proc.stdout.decode().split('\n')[22:])
                 # Check stdout, stderr for logging purposes
@@ -215,10 +223,16 @@ class XLMMacroDeobfuscator(ServiceBase):
                     self.log.error(f"Error detected in CLI output: {trace}")
                     return {}
                 try:
-                    return json.load(output)
+                    with os.fdopen(output_fd, "r") as output:
+                        return json.load(output)
                 except json.JSONDecodeError:
                     self.log.error('No output written on success.')
                     return {}
+            finally:
+                if config_file_name and os.path.exists(config_file_name):
+                    os.unlink(config_file_name)
+                if output_name and os.path.exists(output_name):
+                    os.unlink(output_name)
 
         common_config = {
             "file": file_path,
