@@ -3,17 +3,21 @@ import os
 import re
 import json
 import tempfile
+import XLMMacroDeobfuscator
+
 from subprocess import run
 
 from typing import Dict, List, Optional, Set, Tuple
 
-import XLMMacroDeobfuscator.configs.settings as deob_settings
 from XLMMacroDeobfuscator.deobfuscator import process_file
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
 
 from pattern_match import PatternMatch
+
+# Override uprint function
+XLMMacroDeobfuscator.deobfuscator.uprint = lambda: None
 
 
 def get_result_subsection(result: ResultSection, title: str, heuristic: int) -> ResultSection:
@@ -166,7 +170,6 @@ class XLMMacroDeobfuscator(ServiceBase):
     def start(self) -> None:
         self.log.info('XLM Macro Deobfuscator service started')
         self.use_CLI = self.config.get('use_CLI', False)
-        deob_settings.SILENT = True
 
     def stop(self) -> None:
         self.log.info('XLM Macro Deobfuscator service ended')
