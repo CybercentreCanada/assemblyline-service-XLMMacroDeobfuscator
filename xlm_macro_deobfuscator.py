@@ -3,21 +3,23 @@ import os
 import re
 import json
 import tempfile
-import XLMMacroDeobfuscator
 
 from subprocess import run
 
 from typing import Dict, List, Optional, Set, Tuple
 
-from XLMMacroDeobfuscator.deobfuscator import process_file
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
 
 from pattern_match import PatternMatch
 
-# Override uprint function
-XLMMacroDeobfuscator.deobfuscator.uprint = lambda: None
+# Use global silent configuration
+import XLMMacroDeobfuscator.configs.settings
+XLMMacroDeobfuscator.configs.settings.SILENT = True
+
+# Import after setting SILENT because SILENT is suppress optional import warnings
+from XLMMacroDeobfuscator.deobfuscator import process_file  # noqa: E402
 
 
 def get_result_subsection(result: ResultSection, title: str, heuristic: int) -> ResultSection:
@@ -271,6 +273,7 @@ class XLMMacroDeobfuscator(ServiceBase):
                                 noninteractive=True,
                                 no_indent=True,
                                 output_level=0,
+                                silent=True,
                                 return_deobfuscated=True,
                                 extract_only=True)
 
@@ -279,6 +282,7 @@ class XLMMacroDeobfuscator(ServiceBase):
                                              noninteractive=True,
                                              no_indent=True,
                                              output_level=0,
+                                             silent=True,
                                              output_formula_format='[[CELL-ADDR]]: [[INT-FORMULA]]',
                                              return_deobfuscated=True)
         except Exception as e:
