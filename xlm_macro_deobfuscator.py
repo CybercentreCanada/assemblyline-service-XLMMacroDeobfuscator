@@ -15,8 +15,8 @@ from assemblyline_v4_service.common.result import Result, ResultSection
 from pattern_match import PatternMatch
 
 # Use global silent configuration
-import XLMMacroDeobfuscator.configs.settings
-XLMMacroDeobfuscator.configs.settings.SILENT = True
+import XLMMacroDeobfuscator.configs.settings as settings
+settings.SILENT = True
 
 # Import after setting SILENT because SILENT is suppress optional import warnings
 from XLMMacroDeobfuscator.deobfuscator import process_file  # noqa: E402
