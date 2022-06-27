@@ -222,16 +222,19 @@ class XLMMacroDeobfuscator(ServiceBase):
 
                 trace = "\n".join(proc.stdout.decode().split('\n')[22:])
                 # Check stdout, stderr for logging purposes
+                error = False
                 if proc.stderr:
                     self.log.error(proc.stderr)
+                    error = True
                 if 'error' in trace.lower():
                     self.log.error(f"Error detected in CLI output: {trace}")
-                    return {}
+                    error = True
                 try:
                     with os.fdopen(output_fd, "r") as output:
                         return json.load(output)
                 except json.JSONDecodeError:
-                    self.log.error('No output written on success.')
+                    if not error:
+                        self.log.error('No output written on success.')
                     return {}
             finally:
                 if config_file_name and os.path.exists(config_file_name):
