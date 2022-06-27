@@ -3,13 +3,8 @@ FROM cccs/assemblyline-v4-service-base:$branch
 
 ENV SERVICE_PATH xlm_macro_deobfuscator.XLMMacroDeobfuscator
 
-# Get latest version of XLMMacroDeobfuscator library and dependencies
-RUN pip install -U https://github.com/DissectMalware/xlrd2/archive/master.zip
-RUN pip install -U https://github.com/DissectMalware/pyxlsb2/archive/master.zip
-RUN pip install -U https://github.com/DissectMalware/XLMMacroDeobfuscator/archive/master.zip
-
-# Optional dependencies
-RUN pip install -U defusedxml
+# Install XLMMacroDeobfuscator library and optional dependencies
+RUN pip install -U xlmmacrodeobfuscator defusedxml
 
 # Switch to assemblyline user
 USER assemblyline
