@@ -54,26 +54,31 @@ stages:
             path: $(samples_location)
           - script: |
               export TAG=${BUILD_SOURCEBRANCH#"refs/tags/v"}
+              export BUILD_REPOSITORY_NAME_LOWERCASE=$(echo ${BUILD_REPOSITORY_NAME##*/} | tr '[:upper:]' '[:lower:]')
+
               if [[ "$TAG" == *stable* ]]; then export BUILD_TYPE=stable; else export BUILD_TYPE=latest; fi
-              docker build --build-arg version=$TAG --build-arg branch=$BUILD_TYPE -t cccs/${BUILD_REPOSITORY_NAME##*/}:$TAG -t cccs/${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE -f ./Dockerfile .
+              docker build --build-arg version=$TAG --build-arg branch=$BUILD_TYPE -t cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$TAG -t cccs/BUILD_REPOSITORY_NAME_LOWERCASE:$BUILD_TYPE -f ./Dockerfile .
             workingDirectory: $(full_self_location)
             displayName: Build containers
           - script: |
+              export BUILD_REPOSITORY_NAME_LOWERCASE=$(echo ${BUILD_REPOSITORY_NAME##*/} | tr '[:upper:]' '[:lower:]')
+
               [ ! -d "$(pwd)/tests" ] && echo "No tests found" && exit
               export TAG=${BUILD_SOURCEBRANCH#"refs/tags/v"}
               if [[ "$TAG" == *stable* ]]; then export BUILD_TYPE=stable; else export BUILD_TYPE=latest; fi
-              [ -f "$(pwd)/tests/requirements.txt" ] && docker run -e FULL_SELF_LOCATION=/opt/al_service -e FULL_SAMPLES_LOCATION=/opt/samples -v /usr/share/ca-certificates/mozilla:/usr/share/ca-certificates/mozilla -v $(pwd)/tests/:/opt/al_service/tests/ -v ${FULL_SAMPLES_LOCATION}:/opt/samples cccs/${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE bash -c 'pip install -U -r tests/requirements.txt; pytest -p no:cacheprovider -vv' && exit
-              docker run -e FULL_SELF_LOCATION=/opt/al_service -e FULL_SAMPLES_LOCATION=/opt/samples -v /usr/share/ca-certificates/mozilla:/usr/share/ca-certificates/mozilla -v $(pwd)/tests/:/opt/al_service/tests/ -v ${FULL_SAMPLES_LOCATION}:/opt/samples cccs/${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE bash -c 'pytest -p no:cacheprovider -vv'
+              [ -f "$(pwd)/tests/requirements.txt" ] && docker run -e FULL_SELF_LOCATION=/opt/al_service -e FULL_SAMPLES_LOCATION=/opt/samples -v /usr/share/ca-certificates/mozilla:/usr/share/ca-certificates/mozilla -v $(pwd)/tests/:/opt/al_service/tests/ -v ${FULL_SAMPLES_LOCATION}:/opt/samples cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE bash -c 'pip install -U -r tests/requirements.txt; pytest -p no:cacheprovider -vv' && exit
+              docker run -e FULL_SELF_LOCATION=/opt/al_service -e FULL_SAMPLES_LOCATION=/opt/samples -v /usr/share/ca-certificates/mozilla:/usr/share/ca-certificates/mozilla -v $(pwd)/tests/:/opt/al_service/tests/ -v ${FULL_SAMPLES_LOCATION}:/opt/samples cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE bash -c 'pytest -p no:cacheprovider -vv'
             workingDirectory: $(full_self_location)
             displayName: Test containers
           - script: |
               export TAG=${BUILD_SOURCEBRANCH#"refs/tags/v"}
               if [[ "$TAG" == *stable* ]]; then export BUILD_TYPE=stable; else export BUILD_TYPE=latest; fi
+              export BUILD_REPOSITORY_NAME_LOWERCASE=$(echo ${BUILD_REPOSITORY_NAME##*/} | tr '[:upper:]' '[:lower:]')
 
               for IMAGE in "cccs/" "uchimera.azurecr.io/cccs/"
               do
-                docker tag cccs/${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE ${IMAGE}${BUILD_REPOSITORY_NAME##*/}:$TAG
-                docker tag cccs/${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE ${IMAGE}${BUILD_REPOSITORY_NAME##*/}:$BUILD_TYPE
-                docker push ${IMAGE}${BUILD_REPOSITORY_NAME##*/} --all-tags
+                docker tag cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE ${IMAGE}${BUILD_REPOSITORY_NAME_LOWERCASE}:$TAG
+                docker tag cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE ${IMAGE}${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE
+                docker push ${IMAGE}${BUILD_REPOSITORY_NAME_LOWERCASE} --all-tags
               done
             displayName: Deploy to container repositories
