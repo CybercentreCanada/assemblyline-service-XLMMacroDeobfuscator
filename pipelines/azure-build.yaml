@@ -57,7 +57,7 @@ stages:
               export BUILD_REPOSITORY_NAME_LOWERCASE=$(echo ${BUILD_REPOSITORY_NAME##*/} | tr '[:upper:]' '[:lower:]')
 
               if [[ "$TAG" == *stable* ]]; then export BUILD_TYPE=stable; else export BUILD_TYPE=latest; fi
-              docker build --build-arg version=$TAG --build-arg branch=$BUILD_TYPE -t cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$TAG -t cccs/BUILD_REPOSITORY_NAME_LOWERCASE:$BUILD_TYPE -f ./Dockerfile .
+              docker build --build-arg version=$TAG --build-arg branch=$BUILD_TYPE -t cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$TAG -t cccs/${BUILD_REPOSITORY_NAME_LOWERCASE}:$BUILD_TYPE -f ./Dockerfile .
             workingDirectory: $(full_self_location)
             displayName: Build containers
           - script: |
