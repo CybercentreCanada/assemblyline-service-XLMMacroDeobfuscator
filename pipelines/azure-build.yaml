@@ -75,6 +75,7 @@ stages:
               export TAG=${BUILD_SOURCEBRANCH#"refs/tags/v"}
               if [[ "$TAG" == *stable* ]]; then export BUILD_TYPE=stable; else export BUILD_TYPE=latest; fi
               export BUILD_REPOSITORY_NAME_LOWERCASE=$(echo ${BUILD_REPOSITORY_NAME##*/} | tr '[:upper:]' '[:lower:]')
+              export SERIES="`expr $TAG : '\([0-9]\+\.[0-9]\+\.\)'`${BUILD_TYPE}"
 
               for IMAGE in "cccs/" "uchimera.azurecr.io/cccs/"
               do
