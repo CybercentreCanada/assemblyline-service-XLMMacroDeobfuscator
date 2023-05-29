@@ -1,21 +1,18 @@
 import collections
+import json
 import os
 import re
-import json
 import tempfile
-
 from subprocess import run
-
 from typing import Dict, List, Optional, Set, Tuple
-
-from assemblyline_v4_service.common.base import ServiceBase
-from assemblyline_v4_service.common.request import ServiceRequest
-from assemblyline_v4_service.common.result import Result, ResultSection
-
-from pattern_match import PatternMatch
 
 # Use global silent configuration
 import XLMMacroDeobfuscator.configs.settings as settings
+from assemblyline_v4_service.common.base import ServiceBase
+from assemblyline_v4_service.common.request import ServiceRequest
+from assemblyline_v4_service.common.result import Result, ResultSection
+from pattern_match import PatternMatch
+
 settings.SILENT = True
 
 # Import after setting SILENT because SILENT is suppress optional import warnings
