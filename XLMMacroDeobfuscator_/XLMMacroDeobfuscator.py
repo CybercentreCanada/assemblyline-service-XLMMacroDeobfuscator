@@ -11,7 +11,7 @@ import XLMMacroDeobfuscator.configs.settings as settings
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
-from pattern_match import PatternMatch
+from XLMMacroDeobfuscator_.pattern_match import PatternMatch
 
 settings.SILENT = True
 
