@@ -31,5 +31,6 @@ extends:
   parameters:
     is_public: "true"
     samples_repo: unittest-samples
+    repo_override: assemblyline-service-xlmmacrodeobfuscator
     labels:
       classification: "UNCLASSIFIED"
