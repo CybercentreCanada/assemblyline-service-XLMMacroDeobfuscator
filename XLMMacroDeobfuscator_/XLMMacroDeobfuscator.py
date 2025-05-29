@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 # Use global silent configuration
 import XLMMacroDeobfuscator.configs.settings as settings
+from assemblyline.common import forge
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.request import ServiceRequest
 from assemblyline_v4_service.common.result import Result, ResultSection
@@ -18,6 +19,7 @@ settings.SILENT = True
 # Import after setting SILENT because SILENT is suppress optional import warnings
 from XLMMacroDeobfuscator.deobfuscator import process_file  # noqa: E402
 
+IDENTIFY = forge.get_identify(use_cache=os.environ.get("PRIVILEGED", "false").lower() == "true")
 
 def get_result_subsection(result: ResultSection, title: str, heuristic: int) -> ResultSection:
     """ Gets the subsection with the given title or creates it if it doesn't exist """
@@ -176,6 +178,9 @@ class XLMMacroDeobfuscator(ServiceBase):
     def execute(self, request: ServiceRequest) -> None:
         result = Result()
         request.result = result
+        if IDENTIFY.fileinfo(request.file_path, generate_hashes=False, skip_fuzzy_hashes=True, calculate_entropy=False)['mime'] == "application/x-ole-storage":
+            # Not a real excel file, skip processing
+            return
         file_path = request.file_path
         start_point = request.get_param('start point')
         get_results = self.results_from_module
