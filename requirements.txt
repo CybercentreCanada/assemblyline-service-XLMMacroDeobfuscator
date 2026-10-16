@@ -2,3 +2,5 @@ assemblyline
 assemblyline-v4-service
 defusedxml
 xlmmacrodeobfuscator
+fuzzywuzzy
+standard-distutils
